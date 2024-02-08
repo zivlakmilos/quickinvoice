@@ -1,6 +1,10 @@
 package quickinvoice
 
-import "time"
+import (
+	"encoding/json"
+	"io"
+	"time"
+)
 
 type Images struct {
 	Logo       string `json:"logo"`
@@ -67,4 +71,26 @@ type Data struct {
 	Products     []Product   `json:"products"`
 	Settings     Settings    `json:"settings"`
 	Translate    Translate   `json:"translate"`
+}
+
+func ParseJson(data []byte) (*Data, error) {
+	var res *Data
+	err := json.Unmarshal(data, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func DecodeJson(r io.Reader) (*Data, error) {
+	var res *Data
+
+	decoder := json.NewDecoder(r)
+	err := decoder.Decode(&res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
