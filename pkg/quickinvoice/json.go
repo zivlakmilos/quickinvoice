@@ -63,14 +63,14 @@ type Translate struct {
 }
 
 type Data struct {
-	Images       Images      `json:"images"`
+	Translate    Translate   `json:"translate"`
 	Sender       Vendor      `json:"sender"`
 	Client       Vendor      `json:"client"`
 	Information  Information `json:"information"`
+	Images       Images      `json:"images"`
 	BottomNotice string      `json:"bottomNotice"`
 	Products     []Product   `json:"products"`
 	Settings     Settings    `json:"settings"`
-	Translate    Translate   `json:"translate"`
 }
 
 func ParseJson(data []byte) (*Data, error) {
