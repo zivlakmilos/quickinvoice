@@ -17,7 +17,6 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	fmt.Printf("%s\n", s)
 	t, err := time.Parse(layout, s)
 	if err != nil {
 		return err
