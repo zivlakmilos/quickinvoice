@@ -16,6 +16,10 @@ func GenerateInvoice(data *Data, w io.Writer) error {
 
 	generateImages(pdf, data.Images)
 
+	pdf.SetFont("Arial", "", 20)
+	pdf.Cell(100, 50, "")
+	pdf.CellFormat(80, 10, "INVOICE", "", 0, "R", false, 0, "")
+
 	return pdf.Output(w)
 }
 
