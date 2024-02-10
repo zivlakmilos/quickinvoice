@@ -30,6 +30,10 @@ func GenerateInvoice(data *Data, w io.Writer) error {
 
 	generateClientAndInfo(pdf, data.Client, data.Information)
 
+	pdf.Ln(10)
+
+	generateProducts(pdf, data.Products)
+
 	return pdf.Output(w)
 }
 
@@ -116,6 +120,44 @@ func generateClientAndInfo(pdf *fpdf.Fpdf, client *Vendor, info *Information) {
 		pdf.CellFormat(125, 10, client.Custom3, "", 0, "", false, 0, "")
 		pdf.Ln(5)
 	}
+}
+
+func generateProducts(pdf *fpdf.Fpdf, products []*Product) {
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(100, 10, "Products", "B", 0, "", false, 0, "")
+	pdf.CellFormat(35, 10, "Quantity", "B", 0, "R", false, 0, "")
+	pdf.CellFormat(25, 10, "Price", "B", 0, "R", false, 0, "")
+	pdf.CellFormat(25, 10, "Total", "B", 0, "R", false, 0, "")
+	pdf.Ln(10)
+
+	total := 0.0
+
+	for _, product := range products {
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(100, 10, product.Description, "B", 0, "", false, 0, "")
+		pdf.CellFormat(35, 10, fmt.Sprintf("%d", product.Quantity), "B", 0, "R", false, 0, "")
+		pdf.CellFormat(25, 10, fmt.Sprintf("%.2f", product.Price), "B", 0, "R", false, 0, "")
+		pdf.CellFormat(25, 10, fmt.Sprintf("%.2f", float64(product.Quantity)*product.Price), "B", 0, "R", false, 0, "")
+		pdf.Ln(10)
+
+		total += float64(product.Quantity) * product.Price
+	}
+
+	pdf.Ln(10)
+
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(135, 10, "", "", 0, "", false, 0, "")
+	pdf.CellFormat(25, 10, "Subtotal:", "B", 0, "R", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(25, 10, fmt.Sprintf("%.2f", total), "B", 0, "R", false, 0, "")
+	pdf.Ln(10)
+
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(135, 10, "", "", 0, "", false, 0, "")
+	pdf.CellFormat(25, 10, "Total:", "", 0, "R", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(25, 10, fmt.Sprintf("%.2f", total), "", 0, "R", false, 0, "")
+	pdf.Ln(10)
 }
 
 func generateImages(pdf *fpdf.Fpdf, images *Images) {
