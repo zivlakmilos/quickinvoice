@@ -1,6 +1,7 @@
 package quickinvoice
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -17,10 +18,104 @@ func GenerateInvoice(data *Data, w io.Writer) error {
 	generateImages(pdf, data.Images)
 
 	pdf.SetFont("Arial", "", 20)
-	pdf.Cell(100, 50, "")
-	pdf.CellFormat(80, 10, "INVOICE", "", 0, "R", false, 0, "")
+	pdf.Cell(100, 10, "")
+	pdf.CellFormat(85, 10, "INVOICE", "", 0, "R", false, 0, "")
+	pdf.Ln(15)
+
+	generateSender(pdf, data.Sender)
+
+	pdf.Ln(5)
+	pdf.CellFormat(185, 10, "", "B", 0, "R", false, 0, "")
+	pdf.Ln(15)
+
+	generateClientAndInfo(pdf, data.Client, data.Information)
 
 	return pdf.Output(w)
+}
+
+func generateSender(pdf *fpdf.Fpdf, sender *Vendor) {
+	if sender == nil {
+		return
+	}
+
+	pdf.Cell(100, 10, "")
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(85, 10, sender.Company, "", 0, "R", false, 0, "")
+	pdf.Ln(5)
+
+	pdf.Cell(100, 10, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(85, 10, sender.Address, "", 0, "R", false, 0, "")
+	pdf.Ln(5)
+
+	pdf.Cell(100, 10, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(85, 10, fmt.Sprintf("%s, %s", sender.Zip, sender.City), "", 0, "R", false, 0, "")
+	pdf.Ln(10)
+
+	if sender.Custom1 != "" {
+		pdf.Cell(100, 10, "")
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(85, 10, sender.Custom1, "", 0, "R", false, 0, "")
+		pdf.Ln(5)
+	}
+	if sender.Custom2 != "" {
+		pdf.Cell(100, 10, "")
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(85, 10, sender.Custom2, "", 0, "R", false, 0, "")
+		pdf.Ln(5)
+	}
+	if sender.Custom3 != "" {
+		pdf.Cell(100, 10, "")
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(85, 10, sender.Custom3, "", 0, "R", false, 0, "")
+		pdf.Ln(5)
+	}
+}
+
+func generateClientAndInfo(pdf *fpdf.Fpdf, client *Vendor, info *Information) {
+	if client == nil || info == nil {
+		return
+	}
+
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(125, 10, client.Company, "", 0, "", false, 0, "")
+	pdf.CellFormat(25, 10, "Number:", "", 0, "R", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(25, 10, info.Number, "", 0, "", false, 0, "")
+	pdf.Ln(5)
+
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(125, 10, client.Address, "", 0, "", false, 0, "")
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(25, 10, "Date:", "", 0, "R", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(25, 10, info.Date.Format("02/01/2006"), "", 0, "", false, 0, "")
+	pdf.Ln(5)
+
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(125, 10, fmt.Sprintf("%s, %s", client.Zip, client.City), "", 0, "", false, 0, "")
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(25, 10, "Due Date:", "", 0, "R", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(25, 10, info.Date.Format("02/01/2006"), "", 0, "", false, 0, "")
+	pdf.Ln(10)
+
+	if client.Custom1 != "" {
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(125, 10, client.Custom1, "", 0, "", false, 0, "")
+		pdf.Ln(5)
+	}
+	if client.Custom2 != "" {
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(125, 10, client.Custom2, "", 0, "", false, 0, "")
+		pdf.Ln(5)
+	}
+	if client.Custom3 != "" {
+		pdf.SetFont("Arial", "", 12)
+		pdf.CellFormat(125, 10, client.Custom3, "", 0, "", false, 0, "")
+		pdf.Ln(5)
+	}
 }
 
 func generateImages(pdf *fpdf.Fpdf, images *Images) {
