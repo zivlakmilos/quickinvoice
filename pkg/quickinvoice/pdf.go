@@ -90,7 +90,7 @@ func generateClientAndInfo(pdf *fpdf.Fpdf, client *Vendor, info *Information) {
 	pdf.SetFont("Arial", "B", 12)
 	pdf.CellFormat(25, 10, "Date:", "", 0, "R", false, 0, "")
 	pdf.SetFont("Arial", "", 12)
-	pdf.CellFormat(25, 10, info.Date.Format("02/01/2006"), "", 0, "", false, 0, "")
+	pdf.CellFormat(25, 10, info.Date.Format("01/02/2006"), "", 0, "", false, 0, "")
 	pdf.Ln(5)
 
 	pdf.SetFont("Arial", "", 12)
@@ -98,7 +98,7 @@ func generateClientAndInfo(pdf *fpdf.Fpdf, client *Vendor, info *Information) {
 	pdf.SetFont("Arial", "B", 12)
 	pdf.CellFormat(25, 10, "Due Date:", "", 0, "R", false, 0, "")
 	pdf.SetFont("Arial", "", 12)
-	pdf.CellFormat(25, 10, info.Date.Format("02/01/2006"), "", 0, "", false, 0, "")
+	pdf.CellFormat(25, 10, info.DueDate.Format("01/02/2006"), "", 0, "", false, 0, "")
 	pdf.Ln(10)
 
 	if client.Custom1 != "" {
