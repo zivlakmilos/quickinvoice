@@ -3,7 +3,6 @@ package quickinvoice
 import (
 	"encoding/json"
 	"io"
-	"time"
 )
 
 type Images struct {
@@ -23,9 +22,9 @@ type Vendor struct {
 }
 
 type Information struct {
-	Date    time.Time `json:"date"`
-	DueDate time.Time `json:"dueDate"`
-	Number  string    `json:"number"`
+	Date    Date   `json:"date"`
+	DueDate Date   `json:"dueDate"`
+	Number  string `json:"number"`
 }
 
 type Product struct {
@@ -51,8 +50,8 @@ type Settings struct {
 type Translate struct {
 	Invoice      string `json:"invoice"`
 	Number       string `json:"number"`
-	Date         string `json:"date"`
-	DueDate      string `json:"dueDate"`
+	Date         Date   `json:"date"`
+	DueDate      Date   `json:"dueDate"`
 	Subtotal     string `json:"subtotal"`
 	Products     string `json:"products"`
 	Quantity     string `json:"quantity"`
@@ -63,28 +62,32 @@ type Translate struct {
 }
 
 type Data struct {
-	Translate    Translate   `json:"translate"`
-	Sender       Vendor      `json:"sender"`
-	Client       Vendor      `json:"client"`
-	Information  Information `json:"information"`
-	Images       Images      `json:"images"`
-	BottomNotice string      `json:"bottomNotice"`
-	Products     []Product   `json:"products"`
-	Settings     Settings    `json:"settings"`
+	Images       *Images      `json:"images"`
+	Sender       *Vendor      `json:"sender"`
+	Client       *Vendor      `json:"client"`
+	Information  *Information `json:"information"`
+	Settings     *Settings    `json:"settings"`
+	Translate    *Translate   `json:"translate"`
+	BottomNotice string       `json:"bottomNotice"`
+	Products     []*Product   `json:"products"`
+}
+
+type Request struct {
+	Data *Data `json:"data"`
 }
 
 func ParseJson(data []byte) (*Data, error) {
-	var res *Data
+	var res *Request
 	err := json.Unmarshal(data, &res)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	return res.Data, nil
 }
 
 func DecodeJson(r io.Reader) (*Data, error) {
-	var res *Data
+	var res *Request
 
 	decoder := json.NewDecoder(r)
 	err := decoder.Decode(&res)
@@ -92,5 +95,5 @@ func DecodeJson(r io.Reader) (*Data, error) {
 		return nil, err
 	}
 
-	return res, nil
+	return res.Data, nil
 }
