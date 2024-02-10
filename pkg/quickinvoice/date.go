@@ -35,6 +35,11 @@ func (d *Date) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, t.Format(layout))), nil
 }
 
+func (d Date) Format(layout string) string {
+	t := time.Time(d)
+	return t.Format(layout)
+}
+
 func (d Date) String() string {
 	t := time.Time(d)
 	return t.Format(layout)
